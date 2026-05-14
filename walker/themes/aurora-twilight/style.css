@@ -1,0 +1,140 @@
+/* ════════════════════════════════════════════════════════════════════
+ *  Aurora Twilight — Walker (Spotlight-style, compacto)
+ *  macOS Spotlight feel: rejilla suave, selección sólida tipo "pill",
+ *  iconos medianos, search bar prominente. El blur de fondo lo aplica
+ *  Hyprland (layerrule `blur on, match:namespace walker`).
+ * ════════════════════════════════════════════════════════════════════ */
+
+@define-color base       #1a1b3a;
+@define-color magenta    #ff006e;
+@define-color cyan       #00d9ff;
+@define-color lavanda    #b8b8ff;
+@define-color text       #e8e8ff;
+@define-color textdim    #c8c8ff;
+
+* {
+  all: unset;
+  font-family: "Inter", "SF Pro Display", "JetBrainsMono Nerd Font", sans-serif;
+  font-size: 14px;
+  color: @text;
+}
+
+scrollbar { opacity: 0; }
+
+/* macOS-feel: iconos medianos en la lista (no minúsculos) */
+.normal-icons { -gtk-icon-size: 26px; }
+.large-icons  { -gtk-icon-size: 32px; }
+
+/* ── Contenedor principal: DARK frosted glass (Aurora Twilight) ──
+ *  Stack de fondo: watermark del lobo translucido SOBRE base indigo a
+ *  alpha 0.82 — necesario para que el "vidrio oscuro" se vea (con 0.55
+ *  el wallpaper bleed-through hacia ver todo plano/transparente). El
+ *  blur real de Hyprland (decoration.blur + layerrule blur on, walker)
+ *  difumina lo que hay detras de la capa.
+ * ────────────────────────────────────────────────────────────────── */
+.box-wrapper {
+  background:
+    url("file:///home/deglozdev/.config/walker/themes/aurora-twilight/wolf-watermark.png")
+      center center / 260px no-repeat,
+    alpha(@base, 0.82);
+  border: 1px solid alpha(@lavanda, 0.16);
+  border-radius: 22px;
+  padding: 14px;
+  box-shadow: 0 32px 72px alpha(#06061a, 0.65),
+              inset 0 1px 0 alpha(@lavanda, 0.08);
+}
+
+/* ── Search bar: tipo Spotlight, con underline cyan al focus ──────── */
+.search-container {
+  background: alpha(@base, 0.45);
+  border: 1px solid alpha(@lavanda, 0.12);
+  border-radius: 14px;
+  padding: 4px 12px;
+  margin-bottom: 6px;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+.search-container:focus-within {
+  border-color: alpha(@cyan, 0.25);
+  box-shadow: 0 0 0 2px alpha(@cyan, 0.08);
+}
+
+.input {
+  font-size: 17px;
+  color: @text;
+  caret-color: @magenta;
+  padding: 8px 2px;
+}
+.input placeholder { color: alpha(@lavanda, 0.50); }
+.input:focus, .input:active { box-shadow: none; outline: none; }
+
+.content-container { }
+.scroll { }
+.list { }
+
+/* ── Items: compactos para que quepan categorias largas (Accessories…
+ *  Recent Documents) sin recortarse cuando omarchy-menu limita la
+ *  ventana a 630px de alto. Esquinas BIEN redondeadas (sin "puntas"). */
+.item-box {
+  padding: 6px 12px;
+  border-radius: 14px;
+  margin: 1px 4px;
+  transition: background 180ms ease, box-shadow 180ms ease;
+}
+
+.item-text-box {
+  all: unset;
+  padding: 2px 0;
+}
+.item-text {
+  color: @text;
+  font-size: 14px;
+}
+.item-subtext {
+  color: alpha(@lavanda, 0.55);
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+.item-image {
+  margin-right: 12px;
+  -gtk-icon-transform: scale(1.0);
+  transition: -gtk-icon-transform 160ms ease;
+}
+
+/* Hover: tinte muy sutil, sin glow */
+child:hover .item-box {
+  background: alpha(@lavanda, 0.06);
+}
+
+/* Selección: pill macOS-style — gradient MUY suave, sin borde inset (era
+ * el que hacia ver "puntas" rectangulares). Solo un halo difuso afuera. */
+child:selected .item-box {
+  background: linear-gradient(90deg,
+              alpha(@cyan, 0.10) 0%,
+              alpha(@magenta, 0.08) 100%);
+  box-shadow: 0 6px 24px alpha(@magenta, 0.08),
+              0 2px 12px alpha(@cyan, 0.06);
+}
+child:selected .item-text { color: @text; font-weight: 600; }
+child:selected .item-subtext { color: alpha(@text, 0.75); }
+child:selected .item-image { -gtk-icon-transform: scale(1.04); }
+
+.current { font-style: italic; }
+
+/* ── Hints / placeholders / errores ─────────────────────────────── */
+.placeholder, .elephant-hint {
+  color: alpha(@lavanda, 0.45);
+  font-style: italic;
+  font-size: 13px;
+}
+
+.keybinds, .keybind-hints {
+  background: transparent;
+  padding: 4px 4px 0 4px;
+  margin-top: 4px;
+  color: alpha(@lavanda, 0.40);
+  font-size: 11px;
+}
+
+.error { color: @magenta; }
+.preview, .preview-box { }
