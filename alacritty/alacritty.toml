@@ -1,0 +1,52 @@
+general.import = [ "~/.config/omarchy/current/theme/alacritty.toml" ]
+
+[env]
+TERM = "xterm-256color"
+
+[terminal]
+# osc52 = secuencias de escape para copy/paste (util dentro de SSH/tmux).
+osc52 = "CopyPaste"
+
+[font]
+normal = { family = "JetBrainsMono Nerd Font", style = "Regular" }
+bold = { family = "JetBrainsMono Nerd Font", style = "Bold" }
+italic = { family = "JetBrainsMono Nerd Font", style = "Italic" }
+size = 9
+
+[window]
+padding.x = 14
+padding.y = 14
+# Reparte el padding sobrante a ambos lados (texto centrado aunque la
+# ventana no sea multiplo exacto del ancho de celda).
+dynamic_padding = true
+decorations = "None"
+# Fondo semi-transparente; el texto sigue 100% opaco. Hyprland aplica el
+# blur "frosted glass" a lo que se ve por detras de ese 12%.
+# OJO: en looknfeel.conf el windowrule de Alacritty es opacity 1 1; si no,
+# Hyprland atenuaria TODO encima de esto y se veria turbio.
+opacity = 0.88
+
+# Cursor estilo "beam" (barra vertical) parpadeante, como un editor moderno.
+[cursor]
+style = { shape = "Beam", blinking = "On" }
+blink_interval = 600
+unfocused_hollow = true
+
+# Al seleccionar texto con el mouse se copia automaticamente al
+# portapapeles normal (el de Ctrl+V), no solo al "primary selection"
+# de Linux (ese se pega con clic central). Asi se siente como macOS.
+[selection]
+save_to_clipboard = true
+
+[keyboard]
+bindings = [
+# Copiar/pegar estilo terminal moderno. En Alacritty estos ya son
+# default, pero los dejo explicitos para tenerlos documentados aqui.
+{ key = "C", mods = "Control|Shift", action = "Copy" },
+{ key = "V", mods = "Control|Shift", action = "Paste" },
+# Atajos clasicos alternativos.
+{ key = "Insert", mods = "Shift", action = "Paste" },
+{ key = "Insert", mods = "Control", action = "Copy" },
+# Shift+Enter manda ESC + CR (util para algunos REPL/editores).
+{ key = "Return", mods = "Shift", chars = "\u001B\r" }
+]
