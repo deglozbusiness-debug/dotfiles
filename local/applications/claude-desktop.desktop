@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Claude Desktop
+Exec=/home/deglozdev/.config/hypr/scripts/dock-minimize-toggle.sh claude claude-desktop
+Icon=/home/deglozdev/.local/share/icons/claude-desktop.png
+Type=Application
+Terminal=false
+NoDisplay=true
