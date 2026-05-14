@@ -1,0 +1,13 @@
+#3.6.2
+[Desktop Entry]
+Type=Application
+Container=_MainDock_
+Name=Archivos
+Icon=/usr/share/icons/Yaru-blue/256x256/apps/org.gnome.Nautilus.png
+Exec=nautilus
+StartupWMClass=org.gnome.Nautilus
+Order=3
+Icon Type=0
+prevent inhibate=false
+Terminal=false
+ShowOnViewport=0

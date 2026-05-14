@@ -1,0 +1,13 @@
+#3.6.2
+[Desktop Entry]
+Type=Application
+Container=_MainDock_
+Name=Typora
+Icon=/usr/share/icons/hicolor/256x256/apps/typora.png
+Exec=typora --enable-wayland-ime
+StartupWMClass=Typora
+Order=6
+Icon Type=0
+prevent inhibate=false
+Terminal=false
+ShowOnViewport=0

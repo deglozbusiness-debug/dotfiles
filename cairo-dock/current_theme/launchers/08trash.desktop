@@ -1,0 +1,13 @@
+#3.6.2
+[Desktop Entry]
+Type=Application
+Container=_MainDock_
+Name=Papelera
+Icon=/usr/share/icons/Yaru/256x256/places/user-trash.png
+Exec=nautilus trash:///
+StartupWMClass=
+Order=24.5
+Icon Type=0
+prevent inhibate=false
+Terminal=false
+ShowOnViewport=0

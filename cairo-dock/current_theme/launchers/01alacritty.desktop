@@ -1,0 +1,13 @@
+#3.6.2
+[Desktop Entry]
+Type=Application
+Container=_MainDock_
+Name=Alacritty
+Icon=/usr/share/pixmaps/Alacritty.svg
+Exec=alacritty
+StartupWMClass=Alacritty
+Order=1
+Icon Type=0
+prevent inhibate=false
+Terminal=false
+ShowOnViewport=0

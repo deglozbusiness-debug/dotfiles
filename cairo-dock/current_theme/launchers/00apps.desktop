@@ -1,0 +1,13 @@
+#3.6.2
+[Desktop Entry]
+Type=Application
+Container=_MainDock_
+Name=APPS
+Icon=/home/deglozdev/.local/share/icons/aurora-launchpad.svg
+Exec=walker --theme launchpad
+StartupWMClass=walker
+Order=6.5
+Icon Type=0
+prevent inhibate=false
+Terminal=false
+ShowOnViewport=0

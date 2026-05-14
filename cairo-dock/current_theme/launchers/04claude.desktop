@@ -1,0 +1,13 @@
+#3.6.2
+[Desktop Entry]
+Type=Application
+Container=_MainDock_
+Name=Claude
+Icon=/usr/share/icons/hicolor/256x256/apps/claude-desktop.png
+Exec=claude-desktop
+StartupWMClass=claude
+Order=4
+Icon Type=0
+prevent inhibate=false
+Terminal=false
+ShowOnViewport=0
