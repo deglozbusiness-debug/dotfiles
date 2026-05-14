@@ -1,0 +1,109 @@
+/* ════════════════════════════════════════════════════════════════════
+ *  Aurora Twilight — GTK4 menus / popovers globales
+ *
+ *  En GTK4 los menus desplegables son `popover.menu` con `modelbutton`
+ *  como items (no `menu menuitem` como en GTK3). Esta hoja replica el
+ *  estilo Aurora para esos widgets — afecta apps modernas (Nautilus,
+ *  Gnome Settings, Files, etc.).
+ *
+ *  Coordinado con ~/.config/gtk-3.0/gtk.css (mismos colores y radios).
+ * ════════════════════════════════════════════════════════════════════ */
+
+@define-color aurora_base    #1a1b3a;
+@define-color aurora_text    #e8e8ff;
+@define-color aurora_lavanda #b8b8ff;
+@define-color aurora_cyan    #00d9ff;
+@define-color aurora_magenta #ff006e;
+
+/* ── Popover contenedor ──────────────────────────────────────── */
+popover,
+popover.menu,
+popover.background,
+popover > contents,
+popover.menu > contents {
+    background-color: alpha(@aurora_base, 0.94);
+    background-image: none;
+    color: @aurora_text;
+    border-radius: 14px;
+    box-shadow: 0 16px 40px rgba(6, 6, 26, 0.65);
+}
+
+popover > arrow,
+popover.menu > arrow {
+    background-color: alpha(@aurora_base, 0.94);
+    border: 1px solid alpha(@aurora_lavanda, 0.35);
+}
+
+popover > contents,
+popover.menu > contents {
+    border: 1px solid alpha(@aurora_lavanda, 0.35);
+    padding: 6px;
+    /* min-width: que los submenus tengan ancho suficiente para mostrar
+     * nombres completos sin truncar. */
+    min-width: 420px;
+}
+
+/* ── Items del popover (modelbutton en GTK4) ────────────────── */
+popover modelbutton,
+popover.menu modelbutton,
+popover button {
+    background-color: transparent;
+    color: @aurora_text;
+    border-radius: 10px;
+    background-clip: padding-box;
+    padding: 6px 12px;
+    margin: 1px 2px;
+    min-width: 380px;
+    border: none;
+    box-shadow: none;
+    transition: background-color 140ms ease;
+}
+
+popover modelbutton:hover,
+popover.menu modelbutton:hover,
+popover button:hover {
+    background-color: alpha(@aurora_cyan, 0.16);
+    background-clip: padding-box;
+    border-radius: 10px;
+    color: @aurora_text;
+    box-shadow: none;
+}
+
+popover modelbutton:disabled,
+popover.menu modelbutton:disabled {
+    color: alpha(@aurora_lavanda, 0.38);
+}
+
+/* ── Separadores ─────────────────────────────────────────────── */
+popover separator,
+popover.menu separator {
+    background-color: alpha(@aurora_lavanda, 0.14);
+    min-height: 1px;
+    margin: 4px 8px;
+}
+
+/* ── Arrow chevron de submenus ──────────────────────────────── */
+popover modelbutton arrow,
+popover.menu modelbutton arrow {
+    color: alpha(@aurora_lavanda, 0.55);
+    min-width: 12px;
+}
+
+popover modelbutton:hover arrow {
+    color: @aurora_cyan;
+}
+
+/* ── Entries (search box) en popovers ───────────────────────── */
+popover entry {
+    background-color: alpha(@aurora_base, 0.65);
+    color: @aurora_text;
+    border: 1px solid alpha(@aurora_lavanda, 0.20);
+    border-radius: 10px;
+    padding: 6px 10px;
+    caret-color: @aurora_magenta;
+}
+
+popover entry:focus {
+    border-color: alpha(@aurora_cyan, 0.45);
+    box-shadow: 0 0 0 2px alpha(@aurora_cyan, 0.18);
+}

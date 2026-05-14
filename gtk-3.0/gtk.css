@@ -1,0 +1,184 @@
+/* ════════════════════════════════════════════════════════════════════
+ *  Aurora Twilight — GTK3 menus globales
+ *
+ *  Aplica al menu del plugin GMenu de Cairo-Dock (que es un GtkMenu
+ *  GTK3 nativo) y a CUALQUIER menu contextual GTK3 del sistema
+ *  (right-click en Nautilus, web-browser nativos GTK3, etc.).
+ *  Trade-off aceptado: los menus de TODO el sistema heredan estos
+ *  colores. Como queremos consistencia Aurora, es lo deseado.
+ *
+ *  Paleta:
+ *    base    #1a1b3a   (indigo profundo, fondo)
+ *    text    #e8e8ff   (blanco-azulado, texto)
+ *    lavanda #b8b8ff   (borde y arrows)
+ *    cyan    #00d9ff   (hover/select)
+ *    magenta #ff006e   (acentos minimo, checks)
+ * ════════════════════════════════════════════════════════════════════ */
+
+@define-color aurora_base    #1a1b3a;
+@define-color aurora_text    #e8e8ff;
+@define-color aurora_lavanda #b8b8ff;
+@define-color aurora_cyan    #00d9ff;
+@define-color aurora_magenta #ff006e;
+
+/* ── Contenedor del menu (popup) ─────────────────────────────────
+ *  alpha 0.94 -> casi solido pero deja un sutil sentimiento "glass"
+ *  cuando Hyprland aplica blur al layer. Border lavanda visible
+ *  para destacar contorno sin verse "duro".
+ * ──────────────────────────────────────────────────────────────── */
+menu,
+.menu,
+.context-menu,
+window.popup,
+window.popup > decoration,
+window.background.popup {
+    background-color: alpha(@aurora_base, 0.94);
+    background-image: none;
+    color: @aurora_text;
+    border: 1px solid alpha(@aurora_lavanda, 0.35);
+    border-radius: 14px;
+    padding: 6px;
+    /* min-width 420px asegura que los submenus (p.ej. "Other") tengan
+     * espacio para mostrar los nombres completos de las apps en una linea,
+     * en vez de truncar a "..." cuando el contenedor es muy estrecho. */
+    min-width: 420px;
+    /* max-height: el submenu "Other" de GMenu tiene 30+ apps; con el dock
+     * abajo, GTK lo abre hacia arriba y los items superiores se salen por
+     * encima del monitor. Limitar la altura fuerza a GTK3 a habilitar
+     * scroll-arrows internos (chevrons arriba/abajo) en vez de desbordar.
+     * 600px: deja amplio margen sobre el dock + waybar para que items
+     * grandes quepan visibles aunque GTK calcule mal el anchor inicial. */
+    max-height: 600px;
+    box-shadow: 0 16px 40px rgba(6, 6, 26, 0.65);
+}
+
+/* ── Item del menu — esquinas BIEN redondeadas, sin "puntas" ───
+ * background-clip: padding-box -> obliga al background-color del item
+ * (hover/select) a respetar el border-radius. Sin esto, GTK3 a veces
+ * pinta el rectangulo de hover SOBRE las esquinas, mostrando "puntas".
+ * min-width 220px -> que cada item tenga ancho minimo aunque su texto
+ * sea corto, asi los submenus mantienen ancho consistente. */
+menuitem,
+.menuitem {
+    background: transparent;
+    color: @aurora_text;
+    padding: 7px 14px;
+    margin: 1px 6px;
+    border-radius: 10px;
+    background-clip: padding-box;
+    border: none;
+    min-height: 22px;
+    min-width: 380px;
+    transition: background-color 140ms ease, color 140ms ease;
+}
+
+/* Hover / focus — cyan SUAVE con esquinas redondeadas (sin inset border
+ * que causaba el highlight rectangular afilado). background-clip aplica
+ * explicito tambien aqui por si el estado :hover redefine el clip box. */
+menuitem:hover,
+menuitem:focus,
+menuitem:hover label,
+menuitem:focus label,
+.menuitem:hover,
+.menuitem:focus {
+    background-color: alpha(@aurora_cyan, 0.16);
+    background-clip: padding-box;
+    border-radius: 10px;
+    color: @aurora_text;
+    box-shadow: none;
+}
+
+/* Selected con teclado (highlight mas marcado pero igual de redondeado) */
+menuitem:selected,
+.menuitem:selected {
+    background-color: alpha(@aurora_cyan, 0.22);
+    background-clip: padding-box;
+    border-radius: 10px;
+    color: @aurora_text;
+    box-shadow: none;
+}
+
+menuitem:disabled,
+menuitem:disabled label,
+.menuitem:disabled {
+    color: alpha(@aurora_lavanda, 0.38);
+}
+
+/* ── Iconos dentro de items ─────────────────────────────────── */
+menuitem image,
+menuitem .icon,
+.menuitem image {
+    margin-right: 10px;
+    -gtk-icon-shadow: none;
+    color: @aurora_lavanda;
+}
+
+menuitem:hover image,
+menuitem:focus image {
+    color: @aurora_text;
+}
+
+/* ── Separadores ────────────────────────────────────────────── */
+menu separator,
+menuitem.separator,
+.menuitem.separator,
+menu > separator {
+    background-color: alpha(@aurora_lavanda, 0.14);
+    min-height: 1px;
+    margin: 4px 8px;
+    border: none;
+}
+
+/* ── Flecha de submenu (chevron >) ──────────────────────────── */
+menu .arrow,
+menuitem .arrow,
+.menuitem arrow {
+    color: alpha(@aurora_lavanda, 0.55);
+    min-width: 12px;
+    min-height: 12px;
+    -gtk-icon-source: -gtk-icontheme('pan-end-symbolic');
+}
+
+menuitem:hover .arrow,
+menuitem:focus .arrow,
+menuitem:selected .arrow {
+    color: @aurora_cyan;
+}
+
+/* ── Acceleradores (atajos de teclado en items, p.ej. Ctrl+C) ─ */
+menuitem accelerator,
+.accelerator {
+    color: alpha(@aurora_lavanda, 0.50);
+    margin-left: 24px;
+}
+
+/* ── Check / Radio en menus (rara vez en GMenu pero por completitud) */
+menuitem check,
+menuitem radio {
+    color: @aurora_lavanda;
+    margin-right: 8px;
+}
+
+menuitem check:checked,
+menuitem radio:checked {
+    color: @aurora_cyan;
+}
+
+/* ── Search entry dentro del menu (GMenu tiene busqueda arriba) ─ */
+menu entry,
+.menu entry,
+window.popup entry {
+    background-color: alpha(@aurora_base, 0.65);
+    color: @aurora_text;
+    border: 1px solid alpha(@aurora_lavanda, 0.20);
+    border-radius: 10px;
+    padding: 6px 10px;
+    caret-color: @aurora_magenta;
+}
+
+menu entry:focus,
+.menu entry:focus,
+window.popup entry:focus {
+    border-color: alpha(@aurora_cyan, 0.45);
+    box-shadow: 0 0 0 2px alpha(@aurora_cyan, 0.18);
+}
