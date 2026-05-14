@@ -1,147 +1,309 @@
-@import "../omarchy/current/theme/waybar.css";
+/* ════════════════════════════════════════════════════════════════
+   AURORA TWILIGHT — Waybar (glassmorphism estilo macOS)
+   ────────────────────────────────────────────────────────────────
+   Notas para aprender:
+   - Waybar usa CSS de GTK3 (NO es CSS de navegador). Soporta cosas
+     como box-shadow, border-radius, transition, linear-gradient...
+     pero NO soporta backdrop-filter. El "blur" real del vidrio lo
+     hace HYPRLAND con `layerrule = blur, waybar` (lo añadimos en
+     la FASE 5). Aqui solo dejamos los fondos semi-transparentes
+     (rgba con alpha < 1) para que ese blur tenga algo que difuminar.
+   - Las "@" definen variables de color (como const en Java).
+   - `* { ... }` aplica a TODOS los elementos (selector universal).
+   - `#clock`, `#cpu` etc. son selectores por id de cada modulo.
+   ════════════════════════════════════════════════════════════════ */
 
+/* ── Paleta Aurora Twilight ───────────────────────────────────── */
+@define-color base      #1a1b3a;   /* indigo profundo  */
+@define-color magenta   #ff006e;   /* acento primario  */
+@define-color cyan      #00d9ff;   /* acento secundario*/
+@define-color lavender  #b8b8ff;   /* texto secundario */
+@define-color text      #e8e8ff;   /* texto principal  */
+
+/* ── Reset / base para todos los modulos ──────────────────────── */
 * {
-  background-color: @background;
-  color: @foreground;
+  /* Inter para el texto de UI; si un glifo no existe en Inter
+     (los iconos Nerd Font), GTK cae automaticamente a la 2da
+     familia. Asi: texto bonito + iconos completos. */
+  font-family: 'Inter', 'JetBrainsMono Nerd Font';
+  font-size: 13px;
+  font-weight: 500;
 
+  /* Quitamos bordes/fondos por defecto: cada "pill" los pone luego */
   border: none;
   border-radius: 0;
   min-height: 0;
-  font-family: 'JetBrainsMono Nerd Font';
-  font-size: 12px;
+  color: @text;
 }
 
-.modules-left {
-  margin-left: 8px;
+/* ── La barra en si ───────────────────────────────────────────
+   Fondo totalmente transparente: la barra no se ve como bloque,
+   solo se ven los "pills" flotantes (look macOS). El blur de
+   Hyprland actuara sobre los pills semi-transparentes. */
+window#waybar {
+  background: transparent;
 }
 
+/* ── Los 3 grupos de modulos como "pills" de vidrio ───────────
+   margin = separacion del borde de pantalla y entre grupos
+   (efecto flotante). padding = aire interno. */
+.modules-left,
+.modules-center,
 .modules-right {
-  margin-right: 8px;
+  /* Fondo: cristal indigo MUY transparente con un leve tinte
+     magenta->cyan en las diagonales (se nota mas con el blur). */
+  background: linear-gradient(135deg,
+              rgba(255, 0, 110, 0.12) 0%,
+              rgba(20, 18, 48, 0.46) 38%,
+              rgba(20, 18, 48, 0.46) 62%,
+              rgba(0, 217, 255, 0.12) 100%);
+  border: 1px solid rgba(184, 184, 255, 0.16);
+  border-radius: 14px;
+  padding: 1px 8px;
+  margin: 5px 6px;
+  /* Borde "falso gradiente": linea magenta a la izquierda + cyan a
+     la derecha (inset), mas glow exterior magenta y cyan. */
+  box-shadow: inset 1px 0 0 0 rgba(255, 0, 110, 0.45),
+              inset -1px 0 0 0 rgba(0, 217, 255, 0.45),
+              0 6px 22px 0 rgba(8, 6, 26, 0.5),
+              0 0 16px 0 rgba(255, 0, 110, 0.10),
+              0 0 22px 0 rgba(0, 217, 255, 0.08);
 }
 
-#workspaces button {
-  all: initial;
-  padding: 0 6px;
-  margin: 0 1.5px;
-  min-width: 9px;
-}
+.modules-left  { margin-left: 10px; }
+.modules-right { margin-right: 10px; }
 
-#workspaces button.empty {
-  opacity: 0.5;
-}
-
-#cpu,
-#battery,
-#pulseaudio,
+/* ── Modulos individuales dentro de los pills ─────────────────
+   Transparentes (heredan el vidrio del grupo). Padding lateral
+   para separarlos. transition => animacion suave en :hover. */
 #custom-omarchy,
-#custom-update {
-  min-width: 12px;
-  margin: 0 7.5px;
-}
-
-#tray {
-  margin-right: 16px;
-}
-
-#bluetooth {
-  margin-right: 17px;
-}
-
-#network {
-  margin-right: 13px;
-}
-
-#custom-expand-icon {
-  margin-right: 18px;
-}
-
-tooltip {
-  padding: 2px;
-}
-
-#custom-update {
-  font-size: 10px;
-}
-
-#clock {
-  margin-left: 8.75px;
-}
-
-#custom-weather {
-  margin-left: 7.5px;
-  margin-right: 7.5px;
-  min-width: 14px;
-}
-
-#custom-weather.unavailable {
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-}
-
-.hidden {
-  opacity: 0;
-}
-
+#workspaces,
+#clock,
+#custom-weather,
+#custom-voxtype,
+#custom-update,
+#network,
+#bluetooth,
+#pulseaudio,
+#wireplumber,
+#cpu,
+#memory,
+#temperature,
+#battery,
+#custom-power,
+#tray,
+#custom-expand-icon,
 #custom-screenrecording-indicator,
 #custom-idle-indicator,
 #custom-notification-silencing-indicator {
-  min-width: 12px;
-  margin-left: 5px;
-  margin-right: 0;
-  font-size: 10px;
-  padding-bottom: 1px;
+  background: transparent;
+  padding: 3px 9px;
+  margin: 1px 1px;
+  border-radius: 9px;
+  transition: background-color 200ms ease, color 200ms ease, box-shadow 200ms ease;
 }
 
-#custom-screenrecording-indicator.active {
-  color: #a55555;
+/* Hover: leve glow magenta para feedback (como botones de macOS) */
+#custom-omarchy:hover,
+#clock:hover,
+#custom-weather:hover,
+#network:hover,
+#bluetooth:hover,
+#pulseaudio:hover,
+#wireplumber:hover,
+#cpu:hover,
+#memory:hover,
+#temperature:hover,
+#battery:hover,
+#custom-power:hover,
+#custom-expand-icon:hover {
+  background: rgba(255, 0, 110, 0.10);
+  box-shadow: 0 0 10px 0 rgba(255, 0, 110, 0.18);
 }
 
+/* ── Boton del logo (izquierda del todo): el lobo Aurora ───────────
+   El icono es una imagen (wolf.png, gradiente magenta->cyan) puesta
+   como background-image. El label del modulo va vacio (un espacio);
+   el tamaño lo da el background-size + el padding. OJO: en :hover hay
+   que usar `background-color` (no el shorthand `background`) y re-
+   declarar la imagen, porque el shorthand borraria el background-image. */
+#custom-omarchy {
+  background-image: url("wolf.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 18px;
+  min-width: 18px;
+  padding: 4px 14px;
+  transition: background-size 160ms cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 160ms ease,
+              box-shadow 160ms ease;
+}
+/* Hover: el lobo "crece" + glow magenta (es el feedback de "soy un boton";
+   abrir el Launchpad es con clic — Waybar no ejecuta nada al pasar el raton). */
+#custom-omarchy:hover {
+  background-color: rgba(255, 0, 110, 0.18);
+  background-image: url("wolf.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 23px;
+  box-shadow: 0 0 14px 0 rgba(255, 0, 110, 0.35),
+              0 0 6px 0 rgba(0, 217, 255, 0.20);
+}
+
+/* ── Workspaces ───────────────────────────────────────────────
+   `all: initial` resetea el boton (GTK pinta botones por defecto).
+   Cada workspace es un mini-pill. */
+#workspaces {
+  padding: 2px 4px;
+}
+#workspaces button {
+  all: initial;
+  font-family: 'JetBrainsMono Nerd Font';
+  font-size: 12px;
+  color: @lavender;
+  padding: 3px 8px;
+  margin: 1px 2px;
+  border-radius: 8px;
+  transition: background-color 200ms ease, color 200ms ease, box-shadow 200ms ease;
+}
+#workspaces button:hover {
+  background: rgba(0, 217, 255, 0.14);
+  color: @cyan;
+}
+#workspaces button.empty {
+  opacity: 0.45;
+}
+/* Workspace ACTIVO: gradiente magenta->cyan SATURADO + doble glow.
+   El protagonista visual de toda la barra. */
+#workspaces button.active {
+  color: #ffffff;
+  background: linear-gradient(120deg, #ff006e 0%, #b400ff 55%, #00d9ff 100%);
+  box-shadow: 0 0 16px 0 rgba(255, 0, 110, 0.60),
+              0 0 10px 0 rgba(0, 217, 255, 0.45),
+              inset 0 0 6px 0 rgba(255, 255, 255, 0.25);
+}
+/* Workspace con ventana urgente: parpadeo de atencion */
+#workspaces button.urgent {
+  color: #ffffff;
+  background: rgba(255, 0, 110, 0.65);
+}
+
+/* ── Titulo de la ventana activa (centro, antes del reloj) ────── */
+#window {
+  color: @lavender;
+  font-style: italic;
+  padding: 4px 12px;
+  margin: 1px 1px;
+  border-radius: 9px;
+  transition: background-color 200ms ease, color 200ms ease;
+}
+#window:hover { background: rgba(255, 0, 110, 0.10); }
+/* Sin ventana enfocada: que no ocupe espacio */
+window#waybar.empty #window,
+#window.empty {
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+/* ── Reloj (centro) ───────────────────────────────────────────── */
+#clock {
+  color: @text;
+  font-weight: 600;
+  padding: 4px 12px;
+}
+
+/* ── Clima ────────────────────────────────────────────────────── */
+#custom-weather {
+  color: @lavender;
+}
+/* Cuando no hay datos de clima, que no ocupe espacio */
+#custom-weather.unavailable {
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+/* ── Stats de sistema: cada uno con un tinte de la paleta ─────── */
+#cpu        { color: @cyan; }
+#memory     { color: @lavender; }
+#temperature{ color: @lavender; }
+#temperature.critical {
+  color: #ffffff;
+  background: rgba(255, 0, 110, 0.65);
+}
+#network    { color: @lavender; }
+#network.disconnected { color: @magenta; }
+#bluetooth  { color: @lavender; }
+#pulseaudio { color: @lavender; }
+#pulseaudio.muted { color: @magenta; opacity: 0.7; }
+#wireplumber { color: @cyan; }
+#wireplumber.muted { color: @lavender; opacity: 0.6; }
+
+/* ── Bateria + estados de aviso ───────────────────────────────── */
+#battery { color: @lavender; }
+#battery.charging { color: @cyan; }
+#battery.warning  { color: #ffcc66; }
+#battery.critical {
+  color: #ffffff;
+  background: rgba(255, 0, 110, 0.7);
+}
+
+/* ── Boton de apagado (derecha del todo) ──────────────────────── */
+#custom-power {
+  color: @magenta;
+  font-size: 14px;
+  padding: 4px 11px;
+}
+#custom-power:hover {
+  background: rgba(255, 0, 110, 0.18);
+  color: #ff4d94;
+}
+
+/* ── Bandeja del sistema ──────────────────────────────────────── */
+#tray { padding: 4px 8px; }
+#tray > .passive { -gtk-icon-effect: dim; }
+#tray > .needs-attention {
+  -gtk-icon-effect: highlight;
+}
+#custom-expand-icon {
+  color: @lavender;
+  font-size: 11px;
+}
+
+/* ── Indicadores omarchy (grabacion / idle / silencio) ────────── */
+#custom-screenrecording-indicator,
+#custom-idle-indicator,
+#custom-notification-silencing-indicator {
+  font-size: 11px;
+  padding: 4px 6px;
+  color: @lavender;
+}
+#custom-screenrecording-indicator.active,
 #custom-idle-indicator.active,
 #custom-notification-silencing-indicator.active {
-  color: #a55555;
+  color: @magenta;
+}
+#custom-voxtype { color: @lavender; }
+#custom-voxtype.recording { color: @magenta; }
+
+/* ── Update disponible ────────────────────────────────────────── */
+#custom-update {
+  color: @cyan;
+  font-size: 11px;
 }
 
-#custom-voxtype {
-  min-width: 12px;
-  margin: 0 0 0 7.5px;
+/* ── Tooltips (la cajita al pasar el mouse) ───────────────────── */
+tooltip {
+  background: rgba(26, 27, 58, 0.92);
+  border: 1px solid rgba(184, 184, 255, 0.18);
+  border-radius: 10px;
+  padding: 6px 4px;
+}
+tooltip label {
+  color: @text;
+  padding: 2px 6px;
 }
 
-#custom-voxtype.recording {
-  color: #a55555;
-}
-.left .modules-left, .right .modules-left { margin: 8px 0 0 0; }
-.left .modules-right, .right .modules-right { margin: 0 0 8px 0; }
-
-.left #workspaces button, .right #workspaces button {
-  padding: 6px 0;
-  margin: 1.5px 0;
-}
-
-.left #cpu, .right #cpu,
-.left #battery, .right #battery,
-.left #pulseaudio, .right #pulseaudio,
-.left #custom-omarchy, .right #custom-omarchy,
-.left #custom-update, .right #custom-update {
-  margin: 1.5px 0;
-  padding: 6px 0;
-  min-width: 0;
-  min-height: 12px;
-}
-
-.left #tray, .right #tray { margin: 0 0 16px 0; }
-.left #bluetooth, .right #bluetooth { margin: 1.5px 0; padding: 6px 0; min-height: 12px; }
-.left #network, .right #network { margin: 1.5px 0; padding: 6px 0; min-height: 12px; }
-.left #custom-expand-icon, .right #custom-expand-icon { margin: 1.5px 0; padding: 6px 0; min-height: 12px; }
-.left #clock, .right #clock { margin: 8.75px 0 0 0; }
-.left #custom-weather, .right #custom-weather { margin: 1.5px 0; padding: 6px 0; min-height: 12px; min-width: 14px; margin-right: 4px; }
-
-.left #custom-screenrecording-indicator, .right #custom-screenrecording-indicator,
-.left #custom-idle-indicator, .right #custom-idle-indicator,
-.left #custom-notification-silencing-indicator, .right #custom-notification-silencing-indicator {
-  margin: 5px 0 0 0;
-  min-width: 0;
-  min-height: 12px;
-}
-
-.left #custom-voxtype, .right #custom-voxtype { margin: 7.5px 0 0 0; min-width: 0; min-height: 12px; }
+/* Clase utilitaria que usan algunos modulos para ocultarse */
+.hidden { opacity: 0; }
