@@ -1,1 +1,23 @@
+# Backups con sufijos (timestamps tipo .bak.1778555976, .bak~, .bak-old, etc.)
 *.bak
+*.bak.*
+
+# Snapshots locales de seguridad (pre-fase / pre-experimento).
+# Si los quieres ver, mira tus tags o branches de respaldo en su lugar.
+backup/
+
+# Cache runtime de cairo-dock (se regenera solo)
+**/.cairo-dock-need-save
+**/.help
+
+# Editor swap files
+.*.swp
+.*.swo
+*~
+
+# Claude Code per-machine settings (permission grants locales)
+.claude/settings.local.json
+
+# OS artifacts
+.DS_Store
+Thumbs.db
